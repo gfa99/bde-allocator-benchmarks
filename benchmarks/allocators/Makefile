@@ -13,8 +13,9 @@ CXX = clang++
 CC = clang
 AR = /usr/local/opt/llvm/bin/llvm-ar
 RANLIB = /usr/local/opt/llvm/bin/llvm-ranlib
-BDEWAF = waf
+BDEWAF = ~/bbcm/bde-tools-github/bin/waf
 
+REPS =
 OPTIM = -g -O3 -DBSLS_ASSERT_LEVEL_OPT
 # OPTIM = -g
 LTO =
@@ -132,12 +133,26 @@ copymove-CP: copymove.cc allocont.h
 copymove-MV: copymove.cc allocont.h
 	$(CXX) -DUSE_MOVE -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
 
-# unique_chars example for AP4, demonstrating BufferedSequentalAllocator
+# unique_chars example for AP4, demonstrating SequentalAllocator
 ap4-uniqchar-default: ap4-uniqchar.cc
 	$(CXX) -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
 ap4-uniqchar-alloc: ap4-uniqchar.cc
 	$(CXX) -DUSE_ALLOC -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
+ap4-uniqchar-count: ap4-uniqchar.cc
+	$(CXX) -DUSE_COUNT -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
+ap4-uniqchar-local: ap4-uniqchar.cc
+	$(CXX) -DUSE_LOCAL -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
 ap4-uniqchar-winkout: ap4-uniqchar.cc
+	$(CXX) -DUSE_WINKOUT -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
+
+# words example for AP4, demonstrating BufferedSequentalAllocator
+ap4-words-default: ap4-words.cc
+	$(CXX) -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
+ap4-words-alloc: ap4-words.cc
+	$(CXX) -DUSE_ALLOC -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
+ap4-words-buffer: ap4-words.cc
+	$(CXX) -DUSE_BUFFER -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
+ap4-words-winkout: ap4-words.cc
 	$(CXX) -DUSE_WINKOUT -o $@ $(CXXFLAGS_LOCAL) $< $(LDFLAGS_LOCAL)
 
 run: run-locality run-zation run-tention run-growth \
@@ -227,7 +242,15 @@ run-tention: tention
 	time ./test-tention | tee tention-result
 	mv tention-result results/
 
-run-ap4-uniqchar: ap4-uniqchar-default ap4-uniqchar-alloc ap4-uniqchar-winkout
-	time ./ap4-uniqchar-default
-	time ./ap4-uniqchar-alloc
-	time ./ap4-uniqchar-winkout
+run-ap4-uniqchar: ap4-uniqchar-default ap4-uniqchar-alloc ap4-uniqchar-count ap4-uniqchar-local ap4-uniqchar-winkout
+	time ./ap4-uniqchar-default $(REPS)
+	time ./ap4-uniqchar-alloc $(REPS)
+	./ap4-uniqchar-count
+	time ./ap4-uniqchar-local $(REPS)
+	time ./ap4-uniqchar-winkout $(REPS)
+
+run-ap4-words: ap4-words-default ap4-words-alloc ap4-words-buffer ap4-words-winkout
+	time ./ap4-words-default $(REPS)
+	time ./ap4-words-alloc $(REPS)
+	time ./ap4-words-buffer $(REPS)
+	time ./ap4-words-winkout $(REPS)
