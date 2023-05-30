@@ -19,13 +19,17 @@ RUN curl https://pyenv.run | bash
 ENV PYENV_ROOT="$HOME/.pyenv"
 ENV PATH="$PYENV_ROOT/bin:$PATH"
 RUN eval "$(pyenv init -)"
-RUN echo 'eval "$(pyenv init -)"' >> $HOME/.bashrc
 RUN pyenv install 3.6
 RUN pyenv global 3.6
 
-# This seems like the latest tagged version still based on WAF.
+# This seems to be the latest tagged version still based on WAF.
 RUN git clone https://github.com/bloomberg/bde-tools.git --branch v1.1 --depth 1
 ENV PATH="$HOME/bde-tools/bin:$PATH"
+
+RUN echo "export PYENV_ROOT=\"$HOME/.pyenv\"" >> $HOME/.bashrc
+RUN echo "export PATH=\"$PYENV_ROOT/bin:\$PATH\"" >> $HOME/.bashrc
+RUN echo 'eval "$(pyenv init -)"' >> $HOME/.bashrc
+RUN echo "export PATH=\"$HOME/bde-tools/bin:\$PATH\"" >> $HOME/.bashrc
 
 COPY . $HOME/bde
 
