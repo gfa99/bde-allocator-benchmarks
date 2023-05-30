@@ -51,7 +51,7 @@ bde-tag: Makefile
 	export CFLAGS='$(CFLAGS_BDE)' && \
 	export CXXFLAGS='$(CXXFLAGS_BDE)' && \
 	waf configure $(WAFCONFIGARGS) && \
-	waf build -v \
+	waf build -j$(shell nproc) \
 	)
 	touch bde-tag
 
