@@ -8,7 +8,7 @@ WORKDIR $HOME
 
 RUN apt update -y
 RUN apt upgrade -y
-RUN apt install -y build-essential git time
+RUN apt install -y build-essential git time bc
 
 # The old build tool is not compatible with Python 3.7+ (PEP 479).
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
